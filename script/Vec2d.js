@@ -49,8 +49,8 @@ export class Vec2d {
   }
 
   moveTowards(target, stepLength) {
-    step = Vec2d.subtract(target, this);
-    mag = step.magnitude();
+    let step = Vec2d.subtract(target, this);
+    let mag = step.magnitude();
     if(mag <= stepLength) {
       this.x = target.x;
       this.y = target.y;
