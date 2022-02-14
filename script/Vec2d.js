@@ -48,6 +48,10 @@ export class Vec2d {
     this.divide(this.magnitude());
   }
 
+  equals(other) {
+    return this.x === other.x && this.y === other.y;
+  }
+
   moveTowards(target, stepLength) {
     let step = Vec2d.subtract(target, this);
     let mag = step.magnitude();
