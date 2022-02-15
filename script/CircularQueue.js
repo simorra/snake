@@ -32,7 +32,16 @@ export class CircularQueue {
     return el;
   }
 
-  peek() {
+  peekFirst() {
+    if(this.isEmpty())
+      return null;
     return this.elems[this.first];
+  }
+
+  peekLast() {
+    if(this.isEmpty())
+      return null;
+    let last = (next-1 >= 0) ? next-1 : this.elems.length-1;
+    return this.elems[last];
   }
 }
