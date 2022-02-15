@@ -1,5 +1,5 @@
-import { Vec2d } from "./Vec2d";
-import { CircularQueue } from "./CircularQueue";
+import { Vec2d } from "./Vec2d.js";
+import { CircularQueue } from "./CircularQueue.js";
 
 const TILE_SIZE = 10;
 
