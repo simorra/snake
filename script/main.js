@@ -49,11 +49,12 @@ function init() {
   canvas = document.querySelector("#gameBoard");
   gridWidth = Math.floor(canvas.width / TILE_SIZE);
   gridHeight = Math.floor(canvas.height / TILE_SIZE);
-  canvas.addEventListener("keydown", keydownHandler);
 
   //snake.body[0] contains the position of the snake's head
   snake.body[0] = new Vec2d(Math.floor(gridWidth/2), Math.floor(gridHeight/2)); 
   targets[0] = new Vec2d(snake.body[0].x, snake.body[0].y);
+
+  window.addEventListener("keydown", keydownHandler);
   window.requestAnimationFrame(gameLoop);
 }
 
