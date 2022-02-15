@@ -52,10 +52,12 @@ function init() {
 
   //snake.body[0] contains the position of the snake's head
   snake.body[0] = new Vec2d(Math.floor(gridWidth/2), Math.floor(gridHeight/2)); 
+  targets[0] = new Vec2d(snake.body[0].x, snake.body[0].y);
   window.requestAnimationFrame(gameLoop);
 }
 
 let lastTimestamp = -1;
+let lastInput = null; //last input processed
 function gameLoop(timestamp) {
   //Seconds passed since the last frame
   let dt = (lastTimestamp === -1) ? 0 : (timestamp - lastTimestamp)/1000;
@@ -71,7 +73,29 @@ function gameLoop(timestamp) {
   else {
     //Check if the snake reached the food
 
-    //Choose next targets
+    //Choose next target for each body part
+    for(let i = snake.body.length-1; i > 0; i--) {
+      targets[i].x = snake.body[i-1].x;
+      targets[i].y = snake.body[i-1].y;
+    }
+    //Choose next target for the head based on input
+    let input = inputBuffer.isEmpty() ? lastInput : inputBuffer.dequeue();
+    switch(input) {
+      case "ArrowUp":
+        targets[0].y = snake.body[0].y - 1;
+        break;
+      case "ArrowRight":
+        targets[0].x = snake.body[0].x + 1;
+        break;
+      case "ArrowDown":
+        targets[0].y = snake.body[0].y + 1;
+        break;
+      case "ArrowLeft":
+        targets[0].x = snake.body[0].x - 1;
+        break;
+      default:
+    }
+    lastInput = input;
 
     //Check game over conditions
 
