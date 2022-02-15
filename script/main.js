@@ -14,12 +14,14 @@ let snake = {
 let targets = []; //target tile for each piece of the snake's body
 
 let inputBuffer = new CircularQueue(10);
+let lastInput = null; //last input processed
 function keydownHandler(ev) {
   //Ignore held down keys
   if(ev.repeat)
     return;
 
-  let last = inputBuffer.peekLast(); //last input received
+  //Last input received
+  let last = inputBuffer.isEmpty() ? lastInput : inputBuffer.peekLast();
   switch(ev.code) {
     case "ArrowUp":
       //Save the new input only if it's meaningful (same in the following cases)
@@ -38,7 +40,6 @@ function keydownHandler(ev) {
       if(last !== "ArrowLeft" && last !== "ArrowRight")
         inputBuffer.enqueue("ArrowLeft");
       break;
-    default:
   }
 }
 
@@ -57,7 +58,6 @@ function init() {
 }
 
 let lastTimestamp = -1;
-let lastInput = null; //last input processed
 function gameLoop(timestamp) {
   //Seconds passed since the last frame
   let dt = (lastTimestamp === -1) ? 0 : (timestamp - lastTimestamp)/1000;
