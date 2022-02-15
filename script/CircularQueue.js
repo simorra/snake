@@ -17,7 +17,7 @@ export class CircularQueue {
     if(this.isFull())
       return false;
     
-    this.elems[next++] = el;
+    this.elems[this.next++] = el;
     this.next %= this.elems.length;
     return true;
   }
@@ -41,7 +41,7 @@ export class CircularQueue {
   peekLast() {
     if(this.isEmpty())
       return null;
-    let last = (next-1 >= 0) ? next-1 : this.elems.length-1;
+    let last = (this.next-1 >= 0) ? this.next-1 : this.elems.length-1;
     return this.elems[last];
   }
 }
