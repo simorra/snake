@@ -1,14 +1,15 @@
 import { Vec2d } from "./Vec2d.js";
 import { CircularQueue } from "./CircularQueue.js";
 
-const TILE_SIZE = 10;
+const TILE_SIZE = 20;
 
 let canvas;
+let ctx;
 let gridWidth, gridHeight; //number of tiles per row and column, respectively
 
 let snake = {
   body: [],
-  speed: 3, //tiles per second
+  speed: 8, //tiles per second
   transition: false //is the snake in transition between tiles?
 };
 let targets = []; //target tile for each piece of the snake's body
@@ -47,6 +48,7 @@ window.onload = init;
 
 function init() {
   canvas = document.querySelector("#gameBoard");
+  ctx = canvas.getContext("2d");
   gridWidth = Math.floor(canvas.width / TILE_SIZE);
   gridHeight = Math.floor(canvas.height / TILE_SIZE);
 
@@ -103,5 +105,33 @@ function gameLoop(timestamp) {
     snake.transition = true;
   }
 
+  //DRAW
+  //Background
+  ctx.fillStyle = "rgb(0, 0, 0)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawSnake();
+
   window.requestAnimationFrame(gameLoop);
+}
+
+function drawSnake() {
+  //Draw the body
+  ctx.fillStyle = "rgb(0, 255, 0)";
+  ctx.beginPath();
+  for(let part of snake.body) {
+    let x = Math.floor(part.x * TILE_SIZE);
+    let y = Math.floor(part.y * TILE_SIZE);
+    ctx.rect(x, y, TILE_SIZE, TILE_SIZE);
+  }
+  ctx.fill();
+
+  //Mark the head
+  ctx.fillStyle = "rgb(255, 255, 255)";
+  ctx.beginPath();
+  let x = Math.floor(snake.body[0].x * TILE_SIZE + TILE_SIZE/2);
+  let y = Math.floor(snake.body[0].y * TILE_SIZE + TILE_SIZE/2);
+  let radius = Math.floor(TILE_SIZE/3);
+  ctx.arc(x, y, radius, 0, 2*Math.PI);
+  ctx.fill();
 }
