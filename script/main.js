@@ -13,6 +13,7 @@ let snake = {
   transition: false //is the snake in transition between tiles?
 };
 let targets = []; //target tile for each piece of the snake's body
+let food;
 
 let inputBuffer = new CircularQueue(10);
 let lastInput = null; //last input processed
@@ -53,8 +54,11 @@ function init() {
   gridHeight = Math.floor(canvas.height / TILE_SIZE);
 
   //snake.body[0] contains the position of the snake's head
-  snake.body[0] = new Vec2d(Math.floor(gridWidth/2), Math.floor(gridHeight/2)); 
+  snake.body[0] = new Vec2d(Math.floor(gridWidth/2) - 5, Math.floor(gridHeight/2)); 
   targets[0] = new Vec2d(snake.body[0].x, snake.body[0].y);
+
+  //Spawn food
+  food = new Vec2d(Math.floor(gridWidth/2) + 5, Math.floor(gridHeight/2));
 
   window.addEventListener("keydown", keydownHandler);
   window.requestAnimationFrame(gameLoop);
@@ -75,6 +79,15 @@ function gameLoop(timestamp) {
   }
   else {
     //Check if the snake reached the food
+    if(snake.body[0].equals(food)) {
+      //Grow the snake
+      snake.body.push(snake.body.at(-1).copy());
+      targets.push(new Vec2d(0, 0)); //the right target will be set in the next step
+
+      //Pick new food location
+      food.x = Math.floor(Math.random() * gridWidth);
+      food.y = Math.floor(Math.random() * gridHeight);
+    }
 
     //Choose next target for each body part
     for(let i = snake.body.length-1; i > 0; i--) {
@@ -110,6 +123,7 @@ function gameLoop(timestamp) {
   ctx.fillStyle = "rgb(0, 0, 0)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  drawFood();
   drawSnake();
 
   window.requestAnimationFrame(gameLoop);
@@ -129,9 +143,19 @@ function drawSnake() {
   //Mark the head
   ctx.fillStyle = "rgb(255, 255, 255)";
   ctx.beginPath();
-  let x = Math.floor(snake.body[0].x * TILE_SIZE + TILE_SIZE/2);
-  let y = Math.floor(snake.body[0].y * TILE_SIZE + TILE_SIZE/2);
+  let x = Math.floor(snake.body[0].x * TILE_SIZE) + Math.floor(TILE_SIZE/2);
+  let y = Math.floor(snake.body[0].y * TILE_SIZE) + Math.floor(TILE_SIZE/2);
   let radius = Math.floor(TILE_SIZE/3);
   ctx.arc(x, y, radius, 0, 2*Math.PI);
+  ctx.fill();
+}
+
+function drawFood() {
+  ctx.fillStyle = "rgb(255, 0, 0)";
+  ctx.beginPath();
+  let x = food.x * TILE_SIZE + Math.floor(TILE_SIZE/2);
+  let y = food.y * TILE_SIZE + Math.floor(TILE_SIZE/2);
+  let radius = Math.floor(TILE_SIZE/3);
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.fill();
 }
