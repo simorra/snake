@@ -44,4 +44,10 @@ export class CircularQueue {
     let last = (this.next-1 >= 0) ? this.next-1 : this.elems.length-1;
     return this.elems[last];
   }
+
+  clear() {
+    this.elems.fill(null);
+    this.first = 0;
+    this.next = 0;
+  }
 }
