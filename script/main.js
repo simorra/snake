@@ -3,9 +3,12 @@ import { CircularQueue } from "./CircularQueue.js";
 
 const TILE_SIZE = 20;
 
-let canvas;
-let ctx;
-let gridWidth, gridHeight; //number of tiles per row and column, respectively
+let canvas = document.querySelector("#gameBoard");
+let ctx = canvas.getContext("2d");
+let gridWidth = Math.floor(canvas.width / TILE_SIZE);
+let gridHeight = Math.floor(canvas.height / TILE_SIZE);
+let resetButton = document.querySelector("#resetButton");
+resetButton.addEventListener("click", reset);
 
 let snake = {
   body: [],
@@ -14,6 +17,7 @@ let snake = {
 };
 let targets = []; //target tile for each piece of the snake's body
 let food;
+let gameOver = false;
 
 let inputBuffer = new CircularQueue(10);
 let lastInput = null; //last input processed
@@ -48,17 +52,12 @@ function keydownHandler(ev) {
 window.onload = init;
 
 function init() {
-  canvas = document.querySelector("#gameBoard");
-  ctx = canvas.getContext("2d");
-  gridWidth = Math.floor(canvas.width / TILE_SIZE);
-  gridHeight = Math.floor(canvas.height / TILE_SIZE);
-
   //snake.body[0] contains the position of the snake's head
-  snake.body[0] = new Vec2d(Math.floor(gridWidth/2) - 5, Math.floor(gridHeight/2)); 
+  snake.body[0] = new Vec2d(Math.floor(gridWidth/2) - 5, Math.floor(gridHeight/2)-1); 
   targets[0] = new Vec2d(snake.body[0].x, snake.body[0].y);
 
   //Spawn food
-  food = new Vec2d(Math.floor(gridWidth/2) + 5, Math.floor(gridHeight/2));
+  food = new Vec2d(Math.floor(gridWidth/2) + 5, Math.floor(gridHeight/2)-1);
 
   window.addEventListener("keydown", keydownHandler);
   window.requestAnimationFrame(gameLoop);
@@ -112,10 +111,18 @@ function gameLoop(timestamp) {
       default:
     }
     lastInput = input;
+    snake.transition = true;
 
     //Check game over conditions
+    if(targets[0].x < 0 || targets[0].x >= gridWidth || //The snake goes out of the grid
+       targets[0].y < 0 || targets[0].y >= gridHeight)
+      gameOver = true;
 
-    snake.transition = true;
+    for(let i = 1; i < targets.length; i++) {
+      //The snake bumps into itself
+      if(targets[0].equals(targets[i]))
+        gameOver = true;
+    }
   }
 
   //DRAW
@@ -126,7 +133,17 @@ function gameLoop(timestamp) {
   drawFood();
   drawSnake();
 
-  window.requestAnimationFrame(gameLoop);
+  if(gameOver) {
+    //Draw game over message
+
+    //Stop input handling
+    window.removeEventListener("keydown", keydownHandler);
+    //Show reset button
+    resetButton.style.visibility = "visible";
+  }
+  else {
+    window.requestAnimationFrame(gameLoop);
+  }
 }
 
 function drawSnake() {
@@ -158,4 +175,19 @@ function drawFood() {
   let radius = Math.floor(TILE_SIZE/3);
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
   ctx.fill();
+}
+
+function reset() {
+  snake.body = [];
+  snake.transition = false;
+  targets = [];
+
+  inputBuffer.clear();
+  lastInput = null;
+
+  gameOver = false;
+  lastTimestamp = -1;
+
+  resetButton.style.visibility = "hidden";
+  init();
 }
