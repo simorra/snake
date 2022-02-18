@@ -148,27 +148,31 @@ function gameLoop(timestamp) {
 
 function drawSnake() {
   //Draw the body
-  ctx.fillStyle = "rgb(0, 255, 0)";
-  ctx.beginPath();
+  ctx.fillStyle = "rgb(0, 200, 0)";
   for(let part of snake.body) {
-    let x = Math.floor(part.x * TILE_SIZE);
-    let y = Math.floor(part.y * TILE_SIZE);
-    ctx.rect(x, y, TILE_SIZE, TILE_SIZE);
+    ctx.beginPath();
+    let x = Math.floor(part.x * TILE_SIZE) + Math.floor(TILE_SIZE/2);
+    let y = Math.floor(part.y * TILE_SIZE) + Math.floor(TILE_SIZE/2);
+    let radius = Math.floor(TILE_SIZE/2 * 0.9);
+    ctx.arc(x, y, radius, 0, 2*Math.PI);
+    ctx.fill();
   }
-  ctx.fill();
 
   //Mark the head
-  ctx.fillStyle = "rgb(255, 255, 255)";
+  if(gameOver)
+    ctx.fillStyle = "rgb(255, 0, 0)";
+  else
+    ctx.fillStyle = "rgb(255, 255, 255)";
   ctx.beginPath();
   let x = Math.floor(snake.body[0].x * TILE_SIZE) + Math.floor(TILE_SIZE/2);
   let y = Math.floor(snake.body[0].y * TILE_SIZE) + Math.floor(TILE_SIZE/2);
-  let radius = Math.floor(TILE_SIZE/3);
+  let radius = Math.floor(TILE_SIZE/4);
   ctx.arc(x, y, radius, 0, 2*Math.PI);
   ctx.fill();
 }
 
 function drawFood() {
-  ctx.fillStyle = "rgb(255, 0, 0)";
+  ctx.fillStyle = "rgb(255, 200, 0)";
   ctx.beginPath();
   let x = food.x * TILE_SIZE + Math.floor(TILE_SIZE/2);
   let y = food.y * TILE_SIZE + Math.floor(TILE_SIZE/2);
